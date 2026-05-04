@@ -36,7 +36,7 @@ export default function RootLayout({
             <main className="min-h-[calc(100vh-56px)]">{children}</main>
             <footer className="border-t border-border py-8 mt-16">
               <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-                <p>&copy; {new Date().getFullYear()} Mildly Concerning Behavior</p>
+                <p>&copy; 2026 Mildly Concerning Behavior</p>
                 <div className="flex gap-4">
                   <a href="/" className="hover:text-foreground transition-colors">Home</a>
                   <a href="/admin" className="hover:text-foreground transition-colors">Admin</a>
