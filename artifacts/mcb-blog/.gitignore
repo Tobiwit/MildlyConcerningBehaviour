@@ -1,0 +1,16 @@
+# Next.js build output
+.next/
+out/
+
+# Environment variables — never commit these
+.env
+.env.local
+.env.production
+
+# SQLite database files
+*.db
+*.db-journal
+prisma/dev.db
+
+# Dependencies (handled at monorepo root)
+node_modules/
