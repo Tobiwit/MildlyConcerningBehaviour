@@ -1,0 +1,27 @@
+kind = "web"
+previewPath = "/"
+title = "Mildly Concerning Behavior"
+version = "1.0.0"
+id = "artifacts/mcb-blog"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = ["/", "/api"]
+localPort = 21185
+
+[services.development]
+run = "pnpm --filter @workspace/mcb-blog run dev"
+
+[services.production]
+build = ["pnpm", "--filter", "@workspace/mcb-blog", "run", "build"]
+run = "pnpm --filter @workspace/mcb-blog run start"
+
+[services.env]
+PORT = "21185"
+DATABASE_URL = "file:./prisma/dev.db"
+NEXTAUTH_URL = "http://localhost:80"
