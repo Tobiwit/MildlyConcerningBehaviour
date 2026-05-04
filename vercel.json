@@ -3,5 +3,6 @@
   "outputDirectory": "artifacts/mcb-blog/.next",
   "installCommand": "pnpm install",
   "framework": "nextjs",
-  "devCommand": "pnpm --filter @workspace/mcb-blog run dev"
+  "devCommand": "pnpm --filter @workspace/mcb-blog run dev",
+  "rootDirectory": "artifacts/mcb-blog"
 }
