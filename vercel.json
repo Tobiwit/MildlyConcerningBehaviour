@@ -1,7 +1,6 @@
 {
-  "root": "artifacts/mcb-blog",
   "buildCommand": "pnpm --filter @workspace/mcb-blog run build",
-  "outputDirectory": ".next",
+  "outputDirectory": "artifacts/mcb-blog/.next",
   "installCommand": "pnpm install",
   "framework": "nextjs",
   "devCommand": "pnpm --filter @workspace/mcb-blog run dev"
