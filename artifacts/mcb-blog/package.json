@@ -8,7 +8,8 @@
     "start": "next start --hostname 0.0.0.0",
     "prisma:push": "prisma db push",
     "prisma:seed": "tsx prisma/seed.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "build:vercel": "prisma generate && next build"
   },
   "dependencies": {
     "next": "^15.3.3",
