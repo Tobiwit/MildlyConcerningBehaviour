@@ -28,52 +28,54 @@
 }
 
 :root {
-  --background: 0 0% 98%;
-  --foreground: 240 10% 8%;
+  --background: 270 20% 97%;
+  --foreground: 270 15% 8%;
   --card: 0 0% 100%;
-  --card-foreground: 240 10% 8%;
-  --border: 240 6% 90%;
-  --input: 240 6% 90%;
-  --ring: 262 83% 58%;
-  --primary: 262 83% 58%;
+  --card-foreground: 270 15% 8%;
+  --border: 270 12% 85%;
+  --input: 270 12% 85%;
+  --ring: 320 100% 55%;
+  --primary: 320 100% 55%;
   --primary-foreground: 0 0% 100%;
-  --secondary: 240 5% 95%;
-  --secondary-foreground: 240 10% 8%;
-  --muted: 240 5% 95%;
-  --muted-foreground: 240 4% 46%;
-  --accent: 240 5% 95%;
-  --accent-foreground: 240 10% 8%;
+  --secondary: 270 15% 93%;
+  --secondary-foreground: 270 15% 8%;
+  --muted: 270 15% 93%;
+  --muted-foreground: 270 10% 40%;
+  --accent: 270 15% 93%;
+  --accent-foreground: 270 15% 8%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
-  --radius: 0.625rem;
+  --radius: 0.75rem;
 
-  --blob-1: 262 83% 75%;
-  --blob-2: 193 95% 68%;
-  --blob-3: 316 70% 75%;
+  --blob-1: 320 100% 60%;
+  --blob-2: 270 100% 65%;
+  --blob-3: 170 100% 45%;
+  --blob-4: 45 100% 55%;
 }
 
 .dark {
-  --background: 240 10% 4%;
+  --background: 270 20% 5%;
   --foreground: 0 0% 95%;
-  --card: 240 10% 7%;
+  --card: 270 20% 9%;
   --card-foreground: 0 0% 95%;
-  --border: 240 6% 16%;
-  --input: 240 6% 16%;
-  --ring: 262 83% 68%;
-  --primary: 262 83% 68%;
+  --border: 270 12% 18%;
+  --input: 270 12% 18%;
+  --ring: 320 100% 65%;
+  --primary: 320 100% 65%;
   --primary-foreground: 0 0% 100%;
-  --secondary: 240 5% 12%;
+  --secondary: 270 15% 14%;
   --secondary-foreground: 0 0% 95%;
-  --muted: 240 5% 12%;
-  --muted-foreground: 240 5% 55%;
-  --accent: 240 5% 12%;
+  --muted: 270 15% 14%;
+  --muted-foreground: 270 8% 55%;
+  --accent: 270 15% 14%;
   --accent-foreground: 0 0% 95%;
   --destructive: 0 72% 51%;
   --destructive-foreground: 0 0% 100%;
 
-  --blob-1: 262 83% 45%;
-  --blob-2: 193 95% 38%;
-  --blob-3: 316 70% 45%;
+  --blob-1: 320 100% 50%;
+  --blob-2: 270 100% 55%;
+  --blob-3: 170 100% 38%;
+  --blob-4: 45 100% 45%;
 }
 
 @layer base {
@@ -82,8 +84,10 @@
   }
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
-      sans-serif;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  h1, h2, h3 {
+    letter-spacing: -0.02em;
   }
 }
 
@@ -93,24 +97,50 @@
     transform: translate(0px, 0px) scale(1);
     border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
   }
-  25% {
-    transform: translate(40px, -60px) scale(1.08);
+  20% {
+    transform: translate(60px, -80px) scale(1.12);
     border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
   }
-  50% {
-    transform: translate(-30px, 40px) scale(0.94);
+  40% {
+    transform: translate(-50px, 60px) scale(0.9);
     border-radius: 50% 60% 30% 70% / 40% 50% 60% 50%;
   }
-  75% {
-    transform: translate(60px, 20px) scale(1.05);
+  60% {
+    transform: translate(80px, 30px) scale(1.08);
     border-radius: 70% 30% 50% 50% / 30% 70% 40% 60%;
+  }
+  80% {
+    transform: translate(-30px, -50px) scale(0.95);
+    border-radius: 40% 60% 60% 40% / 60% 40% 60% 40%;
   }
 }
 
 .blob {
   position: absolute;
   border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
-  filter: blur(60px);
+  filter: blur(35px);
   animation: blob-drift var(--blob-duration, 12s) ease-in-out infinite;
   will-change: transform, border-radius;
+}
+
+/* Squiggly underline decoration */
+.squiggle {
+  text-decoration: wavy underline;
+  text-decoration-color: hsl(var(--primary));
+  text-underline-offset: 6px;
+}
+
+/* Tilted badge */
+.badge-tilt {
+  transform: rotate(-2deg);
+  display: inline-block;
+}
+
+/* Card hover pop */
+.card-pop {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.card-pop:hover {
+  transform: translateY(-3px) rotate(0.3deg);
+  box-shadow: 0 12px 30px -8px hsl(var(--primary) / 0.2);
 }
