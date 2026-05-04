@@ -1,5 +1,3 @@
-import { defineConfig } from "@prisma/internals";
-
-export default defineConfig({
+export default {
   datasourceUrl: process.env.DATABASE_URL,
-});
+};
