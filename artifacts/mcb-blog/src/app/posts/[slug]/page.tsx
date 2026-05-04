@@ -57,60 +57,68 @@ export default async function PostPage({ params }: Props) {
       </div>
 
       <article>
-        {post.category && (
-          <Link href={`/categories/${post.category.slug}`} className="inline-flex items-center gap-1 text-xs font-semibold tracking-wider uppercase text-primary mb-4 hover:underline">
-            <Tag size={11} />
-            {post.category.name}
-          </Link>
-        )}
-
-        {!post.published && (
-          <div className="inline-block rounded-full bg-yellow-500/10 border border-yellow-500/30 px-3 py-1 text-xs text-yellow-600 dark:text-yellow-400 mb-4 ml-2">
-            Draft
-          </div>
-        )}
-
-        <h1 className="text-3xl sm:text-4xl font-bold leading-tight mb-4">{post.title}</h1>
-
-        <div className="flex flex-wrap items-center gap-4 mb-6 pb-6 border-b border-border">
-          <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-sm">
-              {post.author.name.charAt(0).toUpperCase()}
-            </div>
-            <div>
-              <p className="text-sm font-medium">{post.author.name}</p>
-              <p className="text-xs text-muted-foreground">{formatDate(post.createdAt)}</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-1 text-xs text-muted-foreground ml-auto">
-            <Clock size={12} />
-            {readingTime(post.content)}
-          </div>
-          {canEdit && (
-            <Link
-              href={`/posts/${post.slug}/edit`}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs border border-border rounded-md hover:bg-accent transition-colors"
-            >
-              <Edit size={12} />
-              Edit post
+        {/* Header — no panel, floats over background */}
+        <div className="mb-8">
+          {post.category && (
+            <Link href={`/categories/${post.category.slug}`} className="inline-flex items-center gap-1 text-xs font-bold tracking-widest uppercase text-primary mb-4 hover:underline">
+              <Tag size={11} />
+              {post.category.name}
             </Link>
           )}
+
+          {!post.published && (
+            <span className="inline-block rounded-full bg-yellow-500/10 border border-yellow-500/30 px-3 py-1 text-xs text-yellow-600 dark:text-yellow-400 mb-4 ml-2">
+              Draft
+            </span>
+          )}
+
+          <h1 className="text-3xl sm:text-4xl font-black leading-tight mb-5">{post.title}</h1>
+
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-9 h-9 rounded-full bg-primary/15 flex items-center justify-center text-primary font-bold text-sm">
+                {post.author.name.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <p className="text-sm font-semibold">{post.author.name}</p>
+                <p className="text-xs text-muted-foreground">{formatDate(post.createdAt)}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-1 text-xs text-muted-foreground ml-auto">
+              <Clock size={12} />
+              {readingTime(post.content)}
+            </div>
+            {canEdit && (
+              <Link
+                href={`/posts/${post.slug}/edit`}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs border border-border rounded-lg hover:bg-accent transition-colors"
+              >
+                <Edit size={12} />
+                Edit post
+              </Link>
+            )}
+          </div>
         </div>
 
+        {/* Cover image */}
         {post.coverImage && (
-          <div className="relative mb-8 rounded-xl overflow-hidden">
+          <div className="relative mb-8 rounded-2xl overflow-hidden">
             <img src={post.coverImage} alt={post.title} className="w-full max-h-96 object-cover" />
           </div>
         )}
 
-        <div className="prose prose-gray dark:prose-invert max-w-none mb-8">
-          <MarkdownRenderer content={post.content} />
+        {/* Article body — glass panel for readability */}
+        <div className="glass rounded-2xl px-7 py-8 mb-6">
+          <div className="prose prose-gray dark:prose-invert max-w-none">
+            <MarkdownRenderer content={post.content} />
+          </div>
         </div>
 
+        {/* Author bio — glass panel */}
         {post.author.bio && (
-          <div className="border-t border-border pt-6 mb-8">
-            <div className="flex items-start gap-3 p-4 rounded-xl bg-card border border-border">
-              <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold shrink-0">
+          <div className="glass rounded-2xl p-5 mb-6">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center text-primary font-bold shrink-0">
                 {post.author.name.charAt(0).toUpperCase()}
               </div>
               <div>
@@ -121,16 +129,20 @@ export default async function PostPage({ params }: Props) {
           </div>
         )}
 
-        <div className="flex items-center gap-4 border-t border-border pt-6 mb-10">
+        {/* Likes + comment count */}
+        <div className="flex items-center gap-4 py-5 mb-2">
           <LikeButton postId={post.id} initialCount={post._count.likes} initialHasLiked={hasLiked} />
           <span className="text-sm text-muted-foreground">{post._count.comments} comments</span>
         </div>
 
-        <CommentSection
-          postId={post.id}
-          comments={post.comments}
-          session={session}
-        />
+        {/* Comments — glass panel */}
+        <div className="glass rounded-2xl px-6 py-6">
+          <CommentSection
+            postId={post.id}
+            comments={post.comments}
+            session={session}
+          />
+        </div>
       </article>
     </div>
   );

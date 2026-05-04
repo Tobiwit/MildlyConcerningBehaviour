@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { PostCard } from "@/components/PostCard";
 import Link from "next/link";
-import { TrendingUp, Layers, AlertTriangle, PenLine } from "lucide-react";
+import { TrendingUp, Layers, PenLine } from "lucide-react";
 
 async function getPosts() {
   return prisma.post.findMany({
@@ -30,12 +30,7 @@ export default async function HomePage() {
     <div>
       {/* Hero Section */}
       <section className="relative px-4 sm:px-6 pt-14 pb-12 max-w-6xl mx-auto">
-        <div className="glass rounded-3xl px-8 py-10 max-w-2xl">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-primary/30 bg-primary/10 text-primary text-[11px] font-bold tracking-widest uppercase mb-5">
-            <AlertTriangle size={11} />
-            <span>Proceed with caution</span>
-          </div>
-
+        <div className="max-w-2xl">
           <h1 className="text-5xl sm:text-6xl font-black leading-[0.92] mb-5">
             Mildly{" "}
             <span
