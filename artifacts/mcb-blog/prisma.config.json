@@ -1,0 +1,3 @@
+{
+  "datasourceUrl": "$env.DATABASE_URL"
+}
