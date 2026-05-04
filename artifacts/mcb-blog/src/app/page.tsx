@@ -2,8 +2,12 @@ import { prisma } from "@/lib/prisma";
 import { PostCard } from "@/components/PostCard";
 import Link from "next/link";
 import { TrendingUp, Layers, PenLine } from "lucide-react";
+import { unstable_noStore as noStore } from 'next/cache';
+
+export const dynamic = 'force-dynamic';
 
 async function getPosts() {
+  noStore();
   return prisma.post.findMany({
     where: { published: true },
     orderBy: { createdAt: "desc" },
@@ -16,6 +20,7 @@ async function getPosts() {
 }
 
 async function getCategories() {
+  noStore();
   return prisma.category.findMany({
     include: { _count: { select: { posts: true } } },
     orderBy: { name: "asc" },

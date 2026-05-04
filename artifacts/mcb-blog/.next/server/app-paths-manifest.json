@@ -1,5 +1,22 @@
 {
   "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
+  "/api/categories/route": "app/api/categories/route.js",
+  "/api/categories/[id]/route": "app/api/categories/[id]/route.js",
+  "/api/posts/[id]/like/route": "app/api/posts/[id]/like/route.js",
+  "/api/posts/[id]/comments/route": "app/api/posts/[id]/comments/route.js",
+  "/api/posts/route": "app/api/posts/route.js",
+  "/api/posts/[id]/route": "app/api/posts/[id]/route.js",
+  "/api/register/route": "app/api/register/route.js",
+  "/api/users/[id]/route": "app/api/users/[id]/route.js",
+  "/api/users/route": "app/api/users/route.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/(auth)/login/page": "app/(auth)/login/page.js",
+  "/(auth)/register/page": "app/(auth)/register/page.js",
   "/page": "app/page.js",
-  "/posts/[slug]/page": "app/posts/[slug]/page.js"
+  "/posts/[slug]/edit/page": "app/posts/[slug]/edit/page.js",
+  "/posts/[slug]/page": "app/posts/[slug]/page.js",
+  "/categories/[slug]/page": "app/categories/[slug]/page.js",
+  "/profile/[username]/page": "app/profile/[username]/page.js",
+  "/posts/new/page": "app/posts/new/page.js",
+  "/admin/page": "app/admin/page.js"
 }

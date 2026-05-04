@@ -1,4 +1,4 @@
-// File: /home/runner/workspace/artifacts/mcb-blog/src/app/api/auth/[...nextauth]/route.ts
+// File: C:\Users\Tobia\Documents\GitHub\MildlyConcerningBehavior\artifacts\mcb-blog\src\app\api\auth\[...nextauth]\route.ts
 import * as entry from '../../../../../../src/app/api/auth/[...nextauth]/route.js'
 import type { NextRequest } from 'next/server.js'
 
