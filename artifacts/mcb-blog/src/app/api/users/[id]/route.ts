@@ -11,8 +11,14 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   try {
     const { id } = await params;
     const session = await getServerSession(authOptions);
-    const role = (session?.user as { role?: string })?.role;
-    if (!session || role !== "admin") {
+    if (!session) return NextResponse.json({ error: "Forbidden." }, { status: 403 });
+
+    const sessionId = (session.user as { id?: string })?.id;
+    const role = (session.user as { role?: string })?.role;
+    const isSelf = sessionId === id;
+    const isAdmin = role === "admin";
+
+    if (!isSelf && !isAdmin) {
       return NextResponse.json({ error: "Forbidden." }, { status: 403 });
     }
 
@@ -22,7 +28,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     const updated = await prisma.user.update({
       where: { id },
       data: {
-        ...(newRole ? { role: newRole } : {}),
+        ...(newRole && isAdmin ? { role: newRole } : {}),
         ...(bio !== undefined ? { bio } : {}),
         ...(avatar !== undefined ? { avatar } : {}),
       },

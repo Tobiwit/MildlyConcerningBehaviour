@@ -101,6 +101,24 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../src/app/invite/[token]/page.tsx
+{
+  type __IsExpected<Specific extends AppPageConfig<"/invite/[token]">> = Specific
+  const handler = {} as typeof import("../../src/app/invite/[token]/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../src/app/onboarding/page.tsx
+{
+  type __IsExpected<Specific extends AppPageConfig<"/onboarding">> = Specific
+  const handler = {} as typeof import("../../src/app/onboarding/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../src/app/page.tsx
 {
   type __IsExpected<Specific extends AppPageConfig<"/">> = Specific
@@ -168,6 +186,33 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/categories">> = Specific
   const handler = {} as typeof import("../../src/app/api/categories/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../src/app/api/invites/[id]/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/invites/[id]">> = Specific
+  const handler = {} as typeof import("../../src/app/api/invites/[id]/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../src/app/api/invites/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/invites">> = Specific
+  const handler = {} as typeof import("../../src/app/api/invites/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../src/app/api/invites/validate/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/invites/validate">> = Specific
+  const handler = {} as typeof import("../../src/app/api/invites/validate/route.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check

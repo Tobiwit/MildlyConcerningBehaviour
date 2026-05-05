@@ -15,7 +15,7 @@ export default async function AdminPage() {
     redirect("/");
   }
 
-  const [users, posts, categories] = await Promise.all([
+  const [users, posts, categories, invites] = await Promise.all([
     prisma.user.findMany({
       orderBy: { createdAt: "desc" },
       select: { id: true, name: true, email: true, role: true, createdAt: true, _count: { select: { posts: true } } },
@@ -29,13 +29,14 @@ export default async function AdminPage() {
       },
     }),
     prisma.category.findMany({ orderBy: { name: "asc" }, include: { _count: { select: { posts: true } } } }),
+    prisma.invite.findMany({ orderBy: { createdAt: "desc" } }),
   ]);
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
       <h1 className="text-2xl font-bold mb-2">Admin Panel</h1>
-      <p className="text-sm text-muted-foreground mb-8">Manage users, posts, and categories.</p>
-      <AdminPanel users={users} posts={posts} categories={categories} />
+      <p className="text-sm text-muted-foreground mb-8">Manage users, posts, categories, and invites.</p>
+      <AdminPanel users={users} posts={posts} categories={categories} invites={invites} />
     </div>
   );
 }

@@ -68,3 +68,15 @@ model Like {
 
   @@unique([postId, userId])
 }
+
+model Invite {
+  id        String    @id @default(cuid())
+  token     String    @unique @default(cuid())
+  email     String?
+  used      Boolean   @default(false)
+  usedAt    DateTime?
+  usedBy    String?
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+  createdBy String
+}

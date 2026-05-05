@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Suspense } from "react";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -30,7 +32,7 @@ export default function LoginPage() {
     if (result?.error) {
       setError("Invalid email or password.");
     } else {
-      router.push("/");
+      router.push(callbackUrl);
       router.refresh();
     }
   }
@@ -39,20 +41,20 @@ export default function LoginPage() {
     <div className="min-h-[calc(100vh-56px)] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold mb-1">Welcome back</h1>
-          <p className="text-sm text-muted-foreground">Sign in to your account to continue</p>
+          <h1 className="text-2xl font-black mb-1">Welcome back</h1>
+          <p className="text-sm text-muted-foreground">Sign in to read and write</p>
         </div>
 
-        <div className="rounded-2xl border border-border bg-card/80 backdrop-blur p-6 shadow-sm">
+        <div className="glass rounded-2xl p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="rounded-md bg-destructive/10 border border-destructive/20 px-3 py-2 text-sm text-destructive">
+              <div className="rounded-xl bg-destructive/10 border border-destructive/20 px-3 py-2 text-sm text-destructive">
                 {error}
               </div>
             )}
 
             <div className="space-y-1.5">
-              <label htmlFor="email" className="text-sm font-medium">Email</label>
+              <label htmlFor="email" className="text-sm font-semibold">Email</label>
               <input
                 id="email"
                 type="email"
@@ -60,12 +62,12 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 required
-                className="w-full px-3 py-2 text-sm rounded-md border border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring transition-shadow"
+                className="w-full px-3 py-2 text-sm rounded-xl border border-input bg-background/50 focus:outline-none focus:ring-2 focus:ring-ring transition-shadow"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label htmlFor="password" className="text-sm font-medium">Password</label>
+              <label htmlFor="password" className="text-sm font-semibold">Password</label>
               <div className="relative">
                 <input
                   id="password"
@@ -74,7 +76,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
-                  className="w-full px-3 py-2 pr-10 text-sm rounded-md border border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring transition-shadow"
+                  className="w-full px-3 py-2 pr-10 text-sm rounded-xl border border-input bg-background/50 focus:outline-none focus:ring-2 focus:ring-ring transition-shadow"
                 />
                 <button
                   type="button"
@@ -89,7 +91,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-60"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-60"
             >
               {loading && <Loader2 size={14} className="animate-spin" />}
               Sign in
@@ -98,12 +100,18 @@ export default function LoginPage() {
         </div>
 
         <p className="text-center text-sm text-muted-foreground mt-6">
-          Don&apos;t have an account?{" "}
-          <Link href="/register" className="text-primary hover:underline font-medium">
-            Create one
-          </Link>
+          Need access?{" "}
+          <span className="text-foreground font-medium">Ask an admin for an invite link.</span>
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }

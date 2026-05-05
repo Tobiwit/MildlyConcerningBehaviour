@@ -1,4 +1,4 @@
-// File: C:\Users\Tobia\Documents\GitHub\MildlyConcerningBehavior\artifacts\mcb-blog\src\app\page.tsx
+// File: /home/runner/workspace/artifacts/mcb-blog/src/app/page.tsx
 import * as entry from '../../../src/app/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

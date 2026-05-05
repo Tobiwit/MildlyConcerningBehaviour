@@ -1,13 +1,11 @@
 import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { PostCard } from "@/components/PostCard";
 import Link from "next/link";
-import { TrendingUp, Layers, PenLine } from "lucide-react";
-import { unstable_noStore as noStore } from 'next/cache';
-
-export const dynamic = 'force-dynamic';
+import { TrendingUp, Layers, Lock, PenLine } from "lucide-react";
 
 async function getPosts() {
-  noStore();
   return prisma.post.findMany({
     where: { published: true },
     orderBy: { createdAt: "desc" },
@@ -20,20 +18,92 @@ async function getPosts() {
 }
 
 async function getCategories() {
-  noStore();
   return prisma.category.findMany({
     include: { _count: { select: { posts: true } } },
     orderBy: { name: "asc" },
   });
 }
 
+function LockedLanding({ postCount }: { postCount: number }) {
+  return (
+    <div>
+      <section className="relative px-4 sm:px-6 pt-14 pb-12 max-w-6xl mx-auto">
+        <div className="max-w-2xl">
+          <h1 className="text-5xl sm:text-6xl font-black leading-[0.92] mb-5">
+            Mildly{" "}
+            <span
+              style={{
+                background: "linear-gradient(125deg, hsl(315 75% 58%), hsl(265 75% 62%))",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
+              Concerning
+            </span>
+            <br />
+            Behavior
+          </h1>
+
+          <p className="text-base text-muted-foreground leading-relaxed max-w-md mb-7">
+            A corner of the internet for{" "}
+            <strong className="text-foreground font-semibold">edgy thoughts</strong>,
+            questionable takes, and observations that probably shouldn&apos;t be
+            published. Written by people who are definitely fine.
+          </p>
+
+          <Link
+            href="/login"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity"
+          >
+            Sign in to read
+          </Link>
+        </div>
+
+        <div className="mt-12 h-px w-full" style={{
+          background: "linear-gradient(90deg, transparent, hsl(var(--primary) / 0.25), transparent)"
+        }} />
+      </section>
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pb-16">
+        <div className="glass rounded-2xl p-10 text-center">
+          <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-5">
+            <Lock size={22} className="text-primary" />
+          </div>
+          <h2 className="text-xl font-black mb-2">Members only</h2>
+          <p className="text-sm text-muted-foreground max-w-xs mx-auto mb-2">
+            {postCount > 0
+              ? `${postCount} post${postCount === 1 ? "" : "s"} waiting inside. Sign in to read.`
+              : "Sign in to start reading and writing."}
+          </p>
+          <p className="text-xs text-muted-foreground mb-6">
+            Don&apos;t have an account? Ask a member for an invite.
+          </p>
+          <Link
+            href="/login"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity"
+          >
+            Sign in
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default async function HomePage() {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    const postCount = await prisma.post.count({ where: { published: true } });
+    return <LockedLanding postCount={postCount} />;
+  }
+
   const [posts, categories] = await Promise.all([getPosts(), getCategories()]);
   const [featured, ...rest] = posts;
 
   return (
     <div>
-      {/* Hero Section */}
       <section className="relative px-4 sm:px-6 pt-14 pb-12 max-w-6xl mx-auto">
         <div className="max-w-2xl">
           <h1 className="text-5xl sm:text-6xl font-black leading-[0.92] mb-5">
@@ -68,7 +138,7 @@ export default async function HomePage() {
               Read the chaos
             </Link>
             <Link
-              href="/register"
+              href="/posts/new"
               className="inline-flex items-center gap-2 px-5 py-2.5 border border-border rounded-xl font-semibold text-sm hover:border-primary hover:text-primary transition-colors"
             >
               <PenLine size={14} />
@@ -82,7 +152,6 @@ export default async function HomePage() {
         }} />
       </section>
 
-      {/* Main content */}
       <div id="posts" className="max-w-6xl mx-auto px-4 sm:px-6 pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8">
           <div>
@@ -91,7 +160,7 @@ export default async function HomePage() {
                 <p className="text-5xl mb-4">✍️</p>
                 <h2 className="text-xl font-bold mb-2">Nothing concerning yet</h2>
                 <p className="text-muted-foreground mb-6">Be the first to post something mildly alarming.</p>
-                <Link href="/register" className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl hover:opacity-90 transition-opacity text-sm font-semibold">
+                <Link href="/posts/new" className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl hover:opacity-90 transition-opacity text-sm font-semibold">
                   Get started
                 </Link>
               </div>
@@ -153,12 +222,6 @@ export default async function HomePage() {
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Mildly concerning thoughts, questionable observations, and takes that didn&apos;t quite make it to LinkedIn. Curated by writers who are probably fine.
               </p>
-              <Link
-                href="/register"
-                className="mt-4 block text-center text-sm px-4 py-2.5 bg-primary text-primary-foreground rounded-xl hover:opacity-90 transition-opacity font-semibold"
-              >
-                Join the chaos →
-              </Link>
             </div>
           </aside>
         </div>
