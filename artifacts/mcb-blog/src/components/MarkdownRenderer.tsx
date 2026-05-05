@@ -17,9 +17,6 @@ export function MarkdownRenderer({ content }: { content: string }) {
             {children}
           </a>
         ),
-        strong: ({ children }) => (
-          <strong className="font-bold text-primary/50">{children}</strong>
-        ),
         ul: ({ children }) => <ul className="list-disc list-inside mb-4 space-y-1">{children}</ul>,
         ol: ({ children }) => <ol className="list-decimal list-inside mb-4 space-y-1">{children}</ol>,
         li: ({ children }) => <li className="text-foreground/90">{children}</li>,

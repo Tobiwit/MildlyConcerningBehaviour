@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { formatDate } from "@/lib/utils";
-import { Trash2, Edit, Users, FileText, Tag, Plus, Loader2, Shield } from "lucide-react";
+import { Trash2, Edit, Users, FileText, Tag, Plus, Loader2, Shield, Link2, Copy, Check, Mail } from "lucide-react";
 
 type AdminUser = {
   id: string; name: string; email: string; role: string; createdAt: Date | string;
@@ -23,16 +23,25 @@ type AdminCategory = {
   _count: { posts: number };
 };
 
+type AdminInvite = {
+  id: string; token: string; email: string | null; used: boolean;
+  usedAt: Date | string | null; createdAt: Date | string; expiresAt: Date | string | null;
+};
+
 export function AdminPanel({
-  users, posts, categories,
+  users, posts, categories, invites,
 }: {
-  users: AdminUser[]; posts: AdminPost[]; categories: AdminCategory[];
+  users: AdminUser[]; posts: AdminPost[]; categories: AdminCategory[]; invites: AdminInvite[];
 }) {
   const router = useRouter();
-  const [tab, setTab] = useState<"users" | "posts" | "categories">("posts");
+  const [tab, setTab] = useState<"posts" | "users" | "categories" | "invites">("posts");
   const [newCategory, setNewCategory] = useState({ name: "", slug: "" });
   const [addingCat, setAddingCat] = useState(false);
   const [catError, setCatError] = useState("");
+
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [creatingInvite, setCreatingInvite] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   async function deletePost(id: string) {
     if (!confirm("Delete this post?")) return;
@@ -81,20 +90,52 @@ export function AdminPanel({
     if (res.ok) router.refresh();
   }
 
+  async function createInvite(e: React.FormEvent) {
+    e.preventDefault();
+    setCreatingInvite(true);
+    const res = await fetch("/api/invites", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: inviteEmail || null }),
+    });
+    if (res.ok) {
+      setInviteEmail("");
+      router.refresh();
+    }
+    setCreatingInvite(false);
+  }
+
+  async function deleteInvite(id: string) {
+    const res = await fetch(`/api/invites/${id}`, { method: "DELETE" });
+    if (res.ok) router.refresh();
+  }
+
+  function copyInviteLink(token: string, id: string) {
+    const url = `${window.location.origin}/invite/${token}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2000);
+    });
+  }
+
+  const unusedInvites = invites.filter((i) => !i.used);
+  const usedInvites = invites.filter((i) => i.used);
+
   const tabs = [
     { id: "posts" as const, label: "Posts", icon: FileText, count: posts.length },
     { id: "users" as const, label: "Users", icon: Users, count: users.length },
     { id: "categories" as const, label: "Categories", icon: Tag, count: categories.length },
+    { id: "invites" as const, label: "Invites", icon: Link2, count: unusedInvites.length },
   ];
 
   return (
     <div>
-      <div className="flex gap-1 mb-6 border-b border-border">
+      <div className="flex gap-1 mb-6 border-b border-border overflow-x-auto">
         {tabs.map(({ id, label, icon: Icon, count }) => (
           <button
             key={id}
             onClick={() => setTab(id)}
-            className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px ${
+            className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px whitespace-nowrap ${
               tab === id ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
           >
@@ -253,6 +294,124 @@ export function AdminPanel({
               </tbody>
             </table>
           </div>
+        </div>
+      )}
+
+      {tab === "invites" && (
+        <div className="space-y-6">
+          <form onSubmit={createInvite} className="p-4 rounded-xl border border-border bg-card/50 space-y-3">
+            <h3 className="text-sm font-semibold">Generate an invite link</h3>
+            <div className="flex gap-3">
+              <div className="relative flex-1">
+                <Mail size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  type="email"
+                  value={inviteEmail}
+                  onChange={(e) => setInviteEmail(e.target.value)}
+                  placeholder="Specific email (optional)"
+                  className="w-full pl-8 pr-3 py-2 text-sm rounded-xl border border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={creatingInvite}
+                className="flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-semibold hover:opacity-90 disabled:opacity-60 whitespace-nowrap"
+              >
+                {creatingInvite ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
+                Generate link
+              </button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              If you enter an email, only that address can use the link.
+            </p>
+          </form>
+
+          {unusedInvites.length > 0 && (
+            <div>
+              <h3 className="text-xs font-bold tracking-widest uppercase text-muted-foreground mb-3">Active invites</h3>
+              <div className="rounded-xl border border-border overflow-hidden">
+                <table className="w-full text-sm">
+                  <thead className="bg-muted/50">
+                    <tr>
+                      <th className="px-4 py-3 text-left font-semibold">For</th>
+                      <th className="px-4 py-3 text-left font-semibold hidden sm:table-cell">Created</th>
+                      <th className="px-4 py-3 text-right font-semibold">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {unusedInvites.map((invite) => (
+                      <tr key={invite.id} className="hover:bg-muted/30 transition-colors">
+                        <td className="px-4 py-3">
+                          {invite.email ? (
+                            <span className="font-medium text-sm">{invite.email}</span>
+                          ) : (
+                            <span className="text-muted-foreground text-xs italic">Anyone with the link</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 text-muted-foreground text-xs hidden sm:table-cell">
+                          {formatDate(invite.createdAt)}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center justify-end gap-2">
+                            <button
+                              onClick={() => copyInviteLink(invite.token, invite.id)}
+                              className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg border border-border hover:border-primary hover:text-primary transition-colors"
+                              title="Copy invite link"
+                            >
+                              {copiedId === invite.id ? (
+                                <><Check size={12} className="text-green-500" /> Copied</>
+                              ) : (
+                                <><Copy size={12} /> Copy link</>
+                              )}
+                            </button>
+                            <button
+                              onClick={() => deleteInvite(invite.id)}
+                              className="text-muted-foreground hover:text-destructive transition-colors"
+                              title="Revoke invite"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {usedInvites.length > 0 && (
+            <div>
+              <h3 className="text-xs font-bold tracking-widest uppercase text-muted-foreground mb-3">Used invites</h3>
+              <div className="rounded-xl border border-border overflow-hidden opacity-60">
+                <table className="w-full text-sm">
+                  <thead className="bg-muted/50">
+                    <tr>
+                      <th className="px-4 py-3 text-left font-semibold">For</th>
+                      <th className="px-4 py-3 text-left font-semibold hidden sm:table-cell">Used</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {usedInvites.map((invite) => (
+                      <tr key={invite.id}>
+                        <td className="px-4 py-3">
+                          {invite.email ?? <span className="italic text-muted-foreground text-xs">Open invite</span>}
+                        </td>
+                        <td className="px-4 py-3 text-muted-foreground text-xs hidden sm:table-cell">
+                          {invite.usedAt ? formatDate(invite.usedAt) : "—"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {invites.length === 0 && (
+            <p className="text-sm text-muted-foreground text-center py-8">No invites yet. Generate one above.</p>
+          )}
         </div>
       )}
     </div>
