@@ -23,6 +23,7 @@ export function Navbar() {
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-sm">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 flex h-14 items-center justify-between">
         <Link href="/" className="flex items-center gap-2 font-bold text-lg tracking-tight">
+          <img src="../../public/favicon.svg" alt="MCB logo" className="w-6 h-6" />
           <span className="text-primary">MCB</span>
           <span className="hidden sm:inline text-foreground/70 text-sm font-normal">Mildly Concerning Behavior</span>
         </Link>
