@@ -13,6 +13,12 @@ const PUBLIC_PATHS = [
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  if (pathname === "/register") {
+    const inviteToken = request.nextUrl.searchParams.get("token");
+    if (inviteToken) return NextResponse.next();
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
   const isPublic = PUBLIC_PATHS.some(
     (p) => pathname === p || pathname.startsWith(p + "/") || pathname.startsWith(p + "?")
   );

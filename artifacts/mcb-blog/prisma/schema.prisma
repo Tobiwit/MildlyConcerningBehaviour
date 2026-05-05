@@ -17,9 +17,9 @@ model User {
   avatar    String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  posts     Post[]
   comments  Comment[]
   likes     Like[]
+  posts     Post[]
 }
 
 model Category {
@@ -30,21 +30,21 @@ model Category {
 }
 
 model Post {
-  id          String    @id @default(cuid())
-  title       String
-  slug        String    @unique
-  excerpt     String?
-  content     String
-  published   Boolean   @default(false)
-  coverImage  String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId    String
-  category    Category? @relation(fields: [categoryId], references: [id])
-  categoryId  String?
-  comments    Comment[]
-  likes       Like[]
+  id         String    @id @default(cuid())
+  title      String
+  slug       String    @unique
+  excerpt    String?
+  content    String
+  published  Boolean   @default(false)
+  coverImage String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  authorId   String
+  categoryId String?
+  comments   Comment[]
+  likes      Like[]
+  author     User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  category   Category? @relation(fields: [categoryId], references: [id])
 }
 
 model Comment {
@@ -52,19 +52,19 @@ model Comment {
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    String
-  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId  String
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
 
 model Like {
   id        String   @id @default(cuid())
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
   createdAt DateTime @default(now())
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([postId, userId])
 }
